@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FloraLog - Plant Tracker & Encyclopedia</title>
+    
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --pastel-bg: #F4F8F4;
+            --pastel-card: #FFFFFF;
+            --pastel-primary: #7C9D8E;
+            --pastel-primary-hover: #658475;
+            --pastel-accent: #E3EDE6;
+            --text-main: #33423A;
+            --text-muted: #6B7C73;
+        }
+
+        body {
+            background-color: var(--pastel-bg);
+            color: var(--text-main);
+        }
+
+        .glitter-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: var(--pastel-primary);
+            color: #FFFFFF;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(124, 157, 142, 0.2);
+            cursor: pointer;
+        }
+
+        .glitter-btn:hover {
+            background-color: var(--pastel-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(124, 157, 142, 0.35);
+        }
+
+        .glitter-btn-secondary {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: var(--pastel-accent);
+            color: #4A6357;
+            border-radius: 0.75rem;
+            cursor: pointer;
+        }
+
+        .glitter-btn-secondary:hover {
+            background-color: #d1e2d5;
+            transform: translateY(-1px);
+        }
+
+        .pastel-card {
+            background-color: var(--pastel-card);
+            border: 1px solid #E3EDE6;
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px -4px rgba(107, 124, 115, 0.06);
+        }
+
+        input, textarea {
+            background-color: #FAFCFA !important;
+            border: 1px solid #D5E2D8 !important;
+            color: var(--text-main) !important;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--pastel-primary) !important;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(124, 157, 142, 0.15) !important;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Header -->
+    <header class="bg-white/85 backdrop-blur-md border-b border-[#E3EDE6] sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-[#E3EDE6] flex items-center justify-center text-[#7C9D8E]">
+                    <i class="fa-solid fa-seedling text-lg"></i>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight text-[#33423A]">Flora<span class="text-[#7C9D8E]">Log</span></h1>
+            </div>
+            <nav class="flex space-x-6 text-sm font-medium">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="text-[#7C9D8E] border-b-2 border-[#7C9D8E] pb-1 font-semibold transition">My Garden</button>
+                <button onclick="switchTab('encyclopedia')" id="nav-encyclopedia" class="text-[#6B7C73] hover:text-[#33423A] transition">Encyclopedia</button>
+                <button onclick="switchTab('scanner')" id="nav-scanner" class="text-[#6B7C73] hover:text-[#33423A] transition"><i class="fa-solid fa-camera mr-1"></i> AI Scanner</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-6 py-10">
+
+        <!-- ================= TAB 1: MY GARDEN ================= -->
+        <section id="tab-dashboard">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-[#33423A] tracking-tight">My Plant Collection</h2>
+                    <p class="text-sm text-[#6B7C73] mt-0.5">Keep track of your watering cycles, growth milestones, and care details.</p>
+                </div>
+                <button onclick="switchTab('scanner')" class="glitter-btn px-4 py-2.5 text-sm font-medium flex items-center space-x-2">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    <span>Add New Plant</span>
+                </button>
+            </div>
+
+            <!-- Plant Grid Container -->
+            <div id="plant-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamically injected via JS -->
+            </div>
+        </section>
+
+        <!-- ================= TAB 2: ENCYCLOPEDIA ================= -->
+        <section id="tab-encyclopedia" class="hidden">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-[#33423A] tracking-tight">Plant Encyclopedia</h2>
+                <p class="text-sm text-[#6B7C73] mt-0.5">Expert care guides, watering habits, and feeding tips for various species.</p>
+            </div>
+
+            <div class="mb-6">
+                <input type="text" id="encyclopedia-search" oninput="filterEncyclopedia()" placeholder="Search encyclopedia by plant name..." class="w-full px-4 py-3 rounded-xl shadow-sm text-sm">
+            </div>
+
+            <div id="encyclopedia-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamically injected via JS -->
+            </div>
+        </section>
+
+        <!-- ================= TAB 3: AI SCANNER ================= -->
+        <section id="tab-scanner" class="hidden max-w-xl mx-auto pastel-card p-8">
+            <div class="text-center mb-6">
+                <div class="bg-[#E3EDE6] text-[#7C9D8E] w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 text-lg">
+                    <i class="fa-solid fa-camera-retro"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-[#33423A] tracking-tight">AI Plant Identifier</h2>
+                <p class="text-sm text-[#6B7C73] mt-0.5">Upload a picture to cross-reference encyclopedia specs instantly.</p>
+            </div>
+
+            <div class="border-2 border-dashed border-[#B8CCD0] rounded-2xl p-6 text-center cursor-pointer hover:bg-[#F4F8F4] transition relative" onclick="document.getElementById('fileInput').click()">
+                <div id="upload-placeholder">
+                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-[#7C9D8E] mb-2"></i>
+                    <p class="text-sm font-medium text-[#33423A]">Click to upload plant photo</p>
+                    <p class="text-xs text-[#6B7C73] mt-1">Supports high-res JPG, PNG</p>
+                </div>
+                <div id="preview-container" class="hidden">
+                    <img id="image-preview" class="h-48 mx-auto rounded-xl object-cover shadow-sm">
+                    <p class="text-xs text-[#7C9D8E] font-medium mt-3">Image loaded! Click below to analyze.</p>
+                </div>
+                <input type="file" id="fileInput" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
+            </div>
+
+            <div id="scan-btn-container" class="hidden mt-6">
+                <button onclick="simulateScan()" class="glitter-btn w-full py-3 text-sm font-semibold">Analyze & Identify Plant</button>
+            </div>
+
+            <div id="scanning-indicator" class="hidden text-center py-6">
+                <i class="fa-solid fa-circle-notch fa-spin text-2xl text-[#7C9D8E] mb-2"></i>
+                <p class="text-sm text-[#6B7C73] font-medium">Scanning leaf patterns & matching encyclopedia...</p>
+            </div>
+
+            <div id="scan-result-box" class="hidden mt-6 bg-[#F4F8F4] border border-[#E3EDE6] rounded-xl p-5">
+                <h3 class="font-bold text-[#33423A] text-sm mb-2"><i class="fa-solid fa-circle-check text-[#7C9D8E] mr-1"></i> Match Found!</h3>
+                <div class="text-xs space-y-1 text-[#6B7C73] mb-4">
+                    <p><strong>Detected Species:</strong> <span id="result-name" class="text-[#33423A]"></span></p>
+                    <p><strong>Watering:</strong> <span id="result-watering" class="text-[#33423A]"></span></p>
+                    <p><strong>Sunlight:</strong> <span id="result-sunlight" class="text-[#33423A]"></span></p>
+                </div>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-[#6B7C73] mb-1">Give your plant a nickname:</label>
+                        <input type="text" id="new-plant-nickname" class="w-full px-3 py-2 rounded-lg text-sm" placeholder="e.g., Living Room Monstera">
+                    </div>
+                    <button onclick="saveScannedPlant()" class="glitter-btn w-full py-2.5 text-xs font-semibold">Save to My Garden</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- UPDATE PROGRESS MODAL -->
+    <div id="update-modal" class="hidden fixed inset-0 bg-[#33423A]/30 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+        <div class="pastel-card max-w-md w-full p-6 shadow-2xl">
+            <h3 class="text-lg font-bold text-[#33423A] mb-1">Update Progress Log</h3>
+            <p id="modal-plant-name" class="text-xs text-[#7C9D8E] font-medium mb-4"></p>
+            
+            <div class="mb-4">
+                <label class="block text-xs font-bold text-[#6B7C73] mb-1">Observation / Growth Note:</label>
+                <textarea id="modal-note-input" rows="3" class="w-full p-3 rounded-xl text-xs" placeholder="E.g., New leaf unfurled today!"></textarea>
+            </div>
+
+            <div class="flex space-x-3">
+                <button onclick="closeModal()" class="flex-1 bg-[#E3EDE6] hover:bg-[#d1e2d5] text-[#33423A] font-semibold py-2.5 rounded-xl text-xs transition">Cancel</button>
+                <button onclick="saveModalNote()" class="glitter-btn flex-1 py-2.5 text-xs font-semibold">Save Update</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vanilla JavaScript Core App Logic -->
+    <script>
+        const encyclopediaData = [
+            {
+                name: 'Monstera Deliciosa',
+                scientific: 'Monstera deliciosa',
+                description: 'Famous for its natural leaf holes (fenestrations), bringing a tropical jungle aesthetic indoors.',
+                watering: 'Every 7-10 days when top 2 inches of soil are dry.',
+                sunlight: 'Bright, indirect sunlight.',
+                feeding: 'Feed monthly during spring and summer with balanced liquid fertilizer.',
+                image: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                name: 'Snake Plant',
+                scientific: 'Sansevieria trifasciata',
+                description: 'An exceptionally hardy succulent with stiff vertical leaves, nearly indestructible.',
+                watering: 'Every 2-3 weeks. Allow soil to dry out completely between waterings.',
+                sunlight: 'Adaptable to low light, thrives best in indirect light.',
+                feeding: 'Feed sparingly once every 2-3 months during growing season.',
+                image: 'https://images.unsplash.com/photo-1593482892290-f5691da40989?auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                name: 'Fiddle Leaf Fig',
+                scientific: 'Ficus lyrata',
+                description: 'Popular feature plant prized for its heavily-veined, violin-shaped glossy dark leaves.',
+                watering: 'Every 7-10 days when the top soil feels dry to the touch.',
+                sunlight: 'Bright, filtered light directly near a sunny window.',
+                feeding: 'Feed bi-weekly in spring and summer with high-nitrogen fertilizer.',
+                image: 'https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=600&q=80'
+            }
+        ];
+
+        let myPlants = [];
+        try {
+            myPlants = JSON.parse(localStorage.getItem('floralog_plants')) || [
+                {
+                    id: 1,
+                    nickname: 'Monty the Monstera',
+                    species: 'Monstera Deliciosa',
+                    scientificName: 'Monstera deliciosa',
+                    wateringFreq: 7,
+                    sunlight: 'Bright Indirect',
+                    image: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=600&q=80',
+                    lastNote: 'Pushed out a brand new split leaf this week!'
+                }
+            ];
+        } catch (e) {
+            myPlants = [];
+        }
+
+        let activeModalPlantId = null;
+        let tempScannedImage = null;
+        let currentScanDetails = null;
+
+        function saveToStorage() {
+            try {
+                localStorage.setItem('floralog_plants', JSON.stringify(myPlants));
+            } catch (e) {}
+        }
+
+        function switchTab(tabId) {
+            ['dashboard', 'encyclopedia', 'scanner'].forEach(t => {
+                const el = document.getElementById('tab-' + t);
+                const nav = document.getElementById('nav-' + t);
+                if (el) el.classList.add('hidden');
+                if (nav) nav.className = "text-[#6B7C73] hover:text-[#33423A] transition";
+            });
+            const targetEl = document.getElementById('tab-' + tabId);
+            const targetNav = document.getElementById('nav-' + tabId);
+            if (targetEl) targetEl.classList.remove('hidden');
+            if (targetNav) targetNav.className = "text-[#7C9D8E] border-b-2 border-[#7C9D8E] pb-1 font-semibold transition";
+            
+            if (tabId === 'dashboard') renderDashboard();
+            if (tabId === 'encyclopedia') renderEncyclopedia(encyclopediaData);
+        }
+
+        function renderDashboard() {
+            const grid = document.getElementById('plant-grid');
+            if (!grid) return;
+            if (myPlants.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full pastel-card p-12 text-center border-dashed border-2 border-[#D5E2D8]">
+                        <i class="fa-solid fa-leaf text-4xl text-[#7C9D8E] mb-3"></i>
+                        <h3 class="text-lg font-medium text-[#33423A]">Your garden is empty</h3>
+                        <p class="text-sm text-[#6B7C73] mb-6">Scan a plant using our tool or pick one from the encyclopedia.</p>
+                        <button onclick="switchTab('scanner')" class="glitter-btn px-5 py-2.5 text-sm font-medium">Add Your First Plant</button>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = myPlants.map(plant => `
+                <div class="pastel-card overflow-hidden flex flex-col justify-between transition hover:shadow-md">
+                    <div>
+                        <div class="relative h-48 bg-[#E3EDE6]">
+                            <img src="${plant.image}" alt="Plant Image" class="w-full h-full object-cover">
+                            <span class="absolute top-3 right-3 bg-white/90 backdrop-blur-md text-[#33423A] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm">${plant.species}</span>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-lg font-bold text-[#33423A]">${plant.nickname}</h3>
+                            <p class="text-xs text-[#7C9D8E] italic font-medium mb-4">${plant.scientificName}</p>
+                            
+                            <div class="grid grid-cols-2 gap-2 text-xs bg-[#F4F8F4] p-3 rounded-xl mb-4 border border-[#E3EDE6]">
+                                <div>
+                                    <span class="block text-[#6B7C73]">Water Every:</span>
+                                    <span class="font-semibold text-[#33423A]">${plant.wateringFreq} days</span>
+                                </div>
+                                <div>
+                                    <span class="block text-[#6B7C73]">Sunlight:</span>
+                                    <span class="font-semibold text-[#33423A]">${plant.sunlight}</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="text-xs font-bold text-[#6B7C73] uppercase tracking-wider mb-1">Recent Notes:</h4>
+                                <p class="text-xs text-[#33423A] bg-[#FAFCFA] p-2.5 rounded-lg border border-[#E3EDE6] italic leading-relaxed">${plant.lastNote || 'No notes added yet.'}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 pt-0 flex items-center justify-between border-t border-[#E3EDE6] mt-4 pt-4">
+                        <button onclick="waterPlant(${plant.id})" class="glitter-btn-secondary text-xs font-semibold px-3.5 py-2 flex items-center space-x-1.5">
+                            <i class="fa-solid fa-droplet text-blue-400"></i>
+                            <span>Watered Today</span>
+                        </button>
+                        <button onclick="openModal(${plant.id})" class="glitter-btn text-xs font-semibold px-3.5 py-2 flex items-center space-x-1.5">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                            <span>Update Log</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderEncyclopedia(items) {
+            const grid = document.getElementById('encyclopedia-grid');
+            if (!grid) return;
+            grid.innerHTML = items.map(item => `
+                <div class="pastel-card overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <img src="${item.image}" class="h-44 w-full object-cover">
+                        <div class="p-5">
+                            <h3 class="text-lg font-bold text-[#33423A]">${item.name}</h3>
+                            <p class="text-xs text-[#7C9D8E] italic font-medium mb-3">${item.scientific}</p>
+                            <p class="text-xs text-[#6B7C73] mb-4 leading-relaxed">${item.description}</p>
+                            
+                            <div class="space-y-2 text-xs text-[#33423A] mb-5 bg-[#F4F8F4] p-3 rounded-xl border border-[#E3EDE6]">
+                                <div class="flex items-center"><i class="fa-solid fa-droplet text-[#7C9D8E] w-5"></i><span class="font-medium mr-1">Watering:</span> ${item.watering}</div>
+                                <div class="flex items-center"><i class="fa-solid fa-sun text-amber-500 w-5"></i><span class="font-medium mr-1">Sunlight:</span> ${item.sunlight}</div>
+                                <div class="flex items-center"><i class="fa-solid fa-utensils text-[#7C9D8E] w-5"></i><span class="font-medium mr-1">Feeding:</span> ${item.feeding}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <button onclick="addFromEncyclopedia('${item.name}')" class="glitter-btn-secondary w-full py-2.5 text-xs font-semibold text-center">
+                            + Add to My Garden
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterEncyclopedia() {
+            const searchInput = document.getElementById('encyclopedia-search');
+            if (!searchInput) return;
+            const query = searchInput.value.toLowerCase();
+            const filtered = encyclopediaData.filter(i => i.name.toLowerCase().includes(query) || i.scientific.toLowerCase().includes(query));
+            renderEncyclopedia(filtered);
+        }
+
+        function addFromEncyclopedia(name) {
+            const item = encyclopediaData.find(i => i.name === name);
+            if (!item) return;
+            myPlants.unshift({
+                id: Date.now(),
+                nickname: 'My ' + item.name,
+                species: item.name,
+                scientificName: item.scientific,
+                wateringFreq: 7,
+                sunlight: item.sunlight,
+                image: item.image,
+                lastNote: 'Added from encyclopedia guide.'
+            });
+            saveToStorage();
+            switchTab('dashboard');
+        }
+
+        function waterPlant(id) {
+            const plant = myPlants.find(p => p.id === id);
+            if (plant) {
+                plant.lastNote = `Watered on ${new Date().toLocaleDateString()}. Soil moisture optimal.`;
+                saveToStorage();
+                renderDashboard();
+            }
+        }
+
+        function openModal(id) {
+            activeModalPlantId = id;
+            const plant = myPlants.find(p => p.id === id);
+            if (!plant) return;
+            document.getElementById('modal-plant-name').innerText = plant.nickname;
+            document.getElementById('modal-note-input').value = plant.lastNote || '';
+            document.getElementById('update-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('update-modal').classList.add('hidden');
+            activeModalPlantId = null;
+        }
+
+        function saveModalNote() {
+            const plant = myPlants.find(p => p.id === activeModalPlantId);
+            if (plant) {
+                plant.lastNote = document.getElementById('modal-note-input').value;
+                saveToStorage();
+                renderDashboard();
+            }
+            closeModal();
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    tempScannedImage = e.target.result;
+                    document.getElementById('image-preview').src = tempScannedImage;
+                    document.getElementById('upload-placeholder').classList.add('hidden');
+                    document.getElementById('preview-container').classList.remove('hidden');
+                    document.getElementById('scan-btn-container').classList.remove('hidden');
+                    document.getElementById('scan-result-box').classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function simulateScan() {
+            document.getElementById('scan-btn-container').classList.add('hidden');
+            document.getElementById('scanning-indicator').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('scanning-indicator').classList.add('hidden');
+                currentScanDetails = {
+                    name: 'Fiddle Leaf Fig',
+                    scientific: 'Ficus lyrata',
+                    watering: 'Every 7-10 days',
+                    sunlight: 'Bright filtered sunlight',
+                    image: tempScannedImage
+                };
+                document.getElementById('result-name').innerText = currentScanDetails.name;
+                document.getElementById('result-watering').innerText = currentScanDetails.watering;
+                document.getElementById('result-sunlight').innerText = currentScanDetails.sunlight;
+                document.getElementById('new-plant-nickname').value = 'My New Fiddle Leaf';
+                document.getElementById('scan-result-box').classList.remove('hidden');
+            }, 1500);
+        }
+
+        function saveScannedPlant() {
+            if (!currentScanDetails) return;
+            const nicknameInput = document.getElementById('new-plant-nickname');
+            const nickname = (nicknameInput && nicknameInput.value) ? nicknameInput.value : currentScanDetails.name;
+            myPlants.unshift({
+                id: Date.now(),
+                nickname: nickname,
+                species: currentScanDetails.name,
+                scientificName: currentScanDetails.scientific,
+                wateringFreq: 8,
+                sunlight: currentScanDetails.sunlight,
+                image: currentScanDetails.image,
+                lastNote: 'Added via AI Scanner today. Settling in nicely!'
+            });
+            saveToStorage();
+            tempScannedImage = null;
+            currentScanDetails = null;
+            document.getElementById('upload-placeholder').classList.remove('hidden');
+            document.getElementById('preview-container').classList.add('hidden');
+            document.getElementById('scan-result-box').classList.add('hidden');
+            switchTab('dashboard');
+        }
+
+        // Initialize application cleanly on window load
+        window.onload = function() {
+            renderDashboard();
+        };
+    </script>
+</body>
+</html>
