@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FloraLog - Greenhouse Edition with Sprouty & Live API Sync</title>
+    <title>FloraLog - Greenhouse Edition with Fernie</title>
     
+    <!-- Tailwind CSS Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -62,17 +64,28 @@
         }
 
         .mascot-bounce {
-            animation: bounce 2s infinite;
+            animation: bounce 2.5s infinite ease-in-out;
         }
 
         @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-6px) rotate(2deg); }
+        }
+
+        .fernie-swoop {
+            transform-origin: bottom left;
+            animation: swoopWiggle 3s infinite ease-in-out;
+        }
+
+        @keyframes swoopWiggle {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-5deg) scale(1.02); }
         }
     </style>
 </head>
 <body class="font-sans antialiased pb-20">
 
+    <!-- Header -->
     <header class="bg-white/85 backdrop-blur-md border-b border-[#E3EDE6] sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-3">
@@ -82,6 +95,7 @@
                 <h1 class="text-xl font-bold tracking-tight text-[#33423A]">Flora<span class="text-[#7C9D8E]">Log</span></h1>
             </div>
 
+            <!-- Weather Widget in Header -->
             <div id="weather-banner" class="hidden md:flex items-center space-x-3 bg-[#FAFCFA] px-3.5 py-1.5 rounded-xl border border-[#E3EDE6] text-xs">
                 <i id="weather-icon" class="fa-solid fa-sun text-amber-400 text-sm"></i>
                 <div>
@@ -98,20 +112,24 @@
         </div>
     </header>
 
+    <!-- Main Container -->
     <main class="max-w-7xl mx-auto px-6 py-8">
 
+        <!-- Weather Alert Banner -->
         <div id="weather-alert" class="hidden mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center space-x-3">
             <i class="fa-solid fa-temperature-high text-amber-500 text-lg"></i>
             <div>
                 <span class="font-bold">Heat Wave Warning!</span>
-                <span id="weather-alert-msg"> Local temperatures are higher than usual today. Sprouty recommends checking soil moisture levels sooner.</span>
+                <span id="weather-alert-msg"> Local temperatures are higher than usual today. Fernie recommends checking soil moisture levels sooner.</span>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
             
+            <!-- Left Side: Active Navigation View (Tabs 1, 2, 3) -->
             <div class="lg:col-span-3 space-y-6">
                 
+                <!-- TAB 1: MY GARDEN CANVAS GRID -->
                 <section id="tab-dashboard">
                     <div class="flex justify-between items-center mb-6">
                         <div>
@@ -127,6 +145,7 @@
                     <div id="plant-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </section>
 
+                <!-- TAB 2: GLOBAL ENCYCLOPEDIA & BOTANICAL API SEARCH -->
                 <section id="tab-encyclopedia" class="hidden">
                     <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
@@ -147,8 +166,10 @@
                     <div id="encyclopedia-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </section>
 
+                <!-- TAB 3: ADD & DIAGNOSE -->
                 <section id="tab-scanner" class="hidden max-w-2xl mx-auto space-y-6">
                     
+                    <!-- Quick Database Search -->
                     <div class="pastel-card p-6">
                         <div class="flex items-center space-x-3 mb-3">
                             <div class="bg-[#E3EDE6] text-[#7C9D8E] w-10 h-10 rounded-xl flex items-center justify-center text-sm">
@@ -166,6 +187,7 @@
                         </div>
                     </div>
 
+                    <!-- Visual Scan & Health Diagnosis -->
                     <div class="pastel-card p-6">
                         <div class="flex items-center space-x-3 mb-4">
                             <div class="bg-[#E3EDE6] text-[#7C9D8E] w-10 h-10 rounded-xl flex items-center justify-center text-sm">
@@ -221,22 +243,56 @@
 
             </div>
 
+            <!-- Right Side: Mascot Fernie & Smart Contextual Alerts -->
             <div class="space-y-6">
                 
+                <!-- Fernie Mascot Card -->
                 <div class="pastel-card p-5 text-center relative overflow-hidden bg-gradient-to-b from-[#FAFCFA] to-[#E3EDE6]/40">
-                    <div class="mascot-bounce inline-block mb-2">
-                        <div id="mascot-avatar" class="w-20 h-20 mx-auto rounded-full bg-[#E3EDE6] flex items-center justify-center text-3xl text-[#7C9D8E] shadow-inner border-2 border-white">
-                            🌿
+                    <div class="mascot-bounce inline-block mb-2 relative">
+                        <!-- Custom SVG Vector Graphic for Fernie -->
+                        <div class="w-24 h-24 mx-auto relative flex items-center justify-center">
+                            <svg class="w-full h-full drop-shadow-md" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Pot -->
+                                <path d="M32 72 L68 72 L64 90 L36 90 Z" fill="#E8B49B" stroke="#D3967A" stroke-width="2" stroke-linejoin="round"/>
+                                <path d="M29 67 L71 67 L71 73 L29 73 Z" fill="#F0C2AC" stroke="#D3967A" stroke-width="2" stroke-linejoin="round"/>
+                                
+                                <!-- Body frond shape -->
+                                <path d="M50 70 C30 70 30 40 50 35 C70 40 70 70 50 70 Z" fill="#2E6F40"/>
+                                
+                                <!-- Frond details / segments -->
+                                <path d="M35 55 C42 50 58 50 65 55" stroke="#8DAA91" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M38 45 C44 42 56 42 62 45" stroke="#8DAA91" stroke-width="1.5" stroke-linecap="round"/>
+                                
+                                <!-- Iconic Fern Hair Swoop (Fiddlehead curl) -->
+                                <g class="fernie-swoop">
+                                    <path d="M48 37 C46 25 38 18 32 20 C25 22 26 31 34 30 C38 29 39 24 35 23" fill="none" stroke="#2E6F40" stroke-width="4.5" stroke-linecap="round"/>
+                                    <path d="M48 37 C46 25 38 18 32 20 C25 22 26 31 34 30 C38 29 39 24 35 23" fill="none" stroke="#8DAA91" stroke-width="1.5" stroke-linecap="round"/>
+                                </g>
+
+                                <!-- Big Anime-Style Eyes -->
+                                <circle cx="43" cy="50" r="4" fill="#33423A"/>
+                                <circle cx="57" cy="50" r="4" fill="#33423A"/>
+                                <circle cx="44.5" cy="48.5" r="1.5" fill="white"/>
+                                <circle cx="58.5" cy="48.5" r="1.5" fill="white"/>
+
+                                <!-- Rosy Cheeks -->
+                                <ellipse cx="38" cy="54" rx="3" ry="2" fill="#F2A6A6" opacity="0.8"/>
+                                <ellipse cx="62" cy="54" rx="3" ry="2" fill="#F2A6A6" opacity="0.8"/>
+
+                                <!-- Cute Smile -->
+                                <path d="M47 56 Q50 59 53 56" stroke="#33423A" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                            </svg>
                         </div>
                     </div>
-                    <h3 class="text-base font-bold text-[#33423A]">Sprouty</h3>
-                    <p class="text-[11px] text-[#7C9D8E] font-semibold mb-3">Greenhouse Fern Guardian</p>
+                    <h3 class="text-base font-bold text-[#33423A]">Fernie</h3>
+                    <p class="text-[11px] text-[#7C9D8E] font-semibold mb-3">Greenhouse Fern Mascot</p>
                     
-                    <div class="bg-white p-3 rounded-xl border border-[#E3EDE6] text-xs text-[#6B7C73] relative">
-                        <p id="sprouty-speech">"Welcome! Everything looks happy in the greenhouse today!"</p>
+                    <div class="bg-white p-3 rounded-xl border border-[#E3EDE6] text-xs text-[#6B7C73] relative shadow-xs">
+                        <p id="sprouty-speech">"Let's grow together! Everything looks happy in the greenhouse today!"</p>
                     </div>
                 </div>
 
+                <!-- Smart Care Reminders -->
                 <div class="pastel-card p-5 space-y-3">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-[#33423A] flex items-center">
                         <i class="fa-solid fa-bell text-[#7C9D8E] mr-2"></i> Smart Reminders
@@ -251,6 +307,7 @@
         </div>
     </main>
 
+    <!-- Modal for Plant Details & Care Editor -->
     <div id="details-modal" class="hidden fixed inset-0 bg-[#33423A]/30 backdrop-blur-xs flex items-center justify-center z-50 p-4">
         <div class="pastel-card max-w-lg w-full p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto">
             <button onclick="closeDetailsModal()" class="absolute top-4 right-4 bg-[#E3EDE6] text-[#6B7C73] hover:text-[#33423A] w-8 h-8 rounded-full flex items-center justify-center transition">
@@ -267,6 +324,7 @@
 
             <div class="space-y-4 text-xs">
 
+                <!-- Blooming Season & Botanical Fact -->
                 <div class="bg-[#FAFCFA] p-3.5 rounded-xl border border-[#E3EDE6] space-y-2">
                     <div class="flex justify-between items-center border-b border-[#E3EDE6] pb-2">
                         <span class="font-bold text-[#33423A] flex items-center"><i class="fa-solid fa-fan text-pink-400 mr-1.5"></i> Blooming Season</span>
@@ -278,11 +336,13 @@
                     </div>
                 </div>
 
+                <!-- Full Care Instructions -->
                 <div>
                     <label class="block font-bold text-[#33423A] mb-1"><i class="fa-solid fa-book-open text-[#7C9D8E] mr-1"></i> Full Care Instructions</label>
                     <textarea id="modal-edit-instructions" rows="3" class="w-full p-3 rounded-xl text-xs leading-relaxed" placeholder="Enter full care instructions..."></textarea>
                 </div>
 
+                <!-- Weekly Watering Tracker -->
                 <div class="bg-[#FAFCFA] p-4 rounded-xl border border-[#E3EDE6] space-y-3">
                     <div class="flex justify-between items-center">
                         <span class="font-bold text-[#33423A] flex items-center"><i class="fa-solid fa-droplet text-blue-400 mr-1.5"></i> Weekly Watering Tracker</span>
@@ -305,6 +365,7 @@
                     </button>
                 </div>
 
+                <!-- Customizable Notes -->
                 <div>
                     <label class="block font-bold text-[#33423A] mb-1"><i class="fa-regular fa-note-sticky text-[#7C9D8E] mr-1"></i> Personal Care Notes</label>
                     <textarea id="modal-edit-notes" rows="2" class="w-full p-3 rounded-xl text-xs leading-relaxed" placeholder="Add custom observations, fertilizer dates, etc."></textarea>
@@ -318,6 +379,7 @@
         </div>
     </div>
 
+    <!-- Modal for deleting plant -->
     <div id="delete-modal" class="hidden fixed inset-0 bg-[#33423A]/30 backdrop-blur-xs flex items-center justify-center z-50 p-4">
         <div class="pastel-card max-w-sm w-full p-6 shadow-2xl text-center">
             <div class="w-12 h-12 rounded-full bg-red-50 text-red-500 flex items-center justify-center mx-auto mb-3 text-lg">
@@ -333,8 +395,6 @@
     </div>
 
     <script>
-        const PERENUAL_API_KEY = 'sk-default'; // Replace with key from perenual.com if desired
-
         let myPlants = JSON.parse(localStorage.getItem('floralog_plants')) || [
             { 
                 id: 1, 
@@ -353,7 +413,7 @@
             },
             {
                 id: 2,
-                nickname: 'Sprouty Jr.',
+                nickname: 'Fernie Jr.',
                 species: 'Boston Fern',
                 scientificName: 'Nephrolepis exaltata',
                 wateringFreq: 'Every 3 days',
@@ -391,7 +451,7 @@
 
                     if (tempF > 80) {
                         document.getElementById('weather-alert').classList.remove('hidden');
-                        updateSprouty("Phew, high local temperatures! Keep an eye on soil dryness today.", "😎");
+                        updateFernie("Phew, high local temperatures! Keep an eye on soil dryness today.");
                     }
                 }
             } catch (e) {
@@ -400,9 +460,8 @@
         }
 
         // Mascot Speech Update Function
-        function updateSprouty(message, emoji = "🌿") {
+        function updateFernie(message) {
             document.getElementById('sprouty-speech').innerText = `"${message}"`;
-            document.getElementById('mascot-avatar').innerText = emoji;
         }
 
         function switchTab(tabId) {
@@ -503,9 +562,9 @@
             remindersList.innerHTML = remindersHtml || `<p class="text-[#6B7C73] text-[11px]">All plants in your collection are hydrated!</p>`;
 
             if (thirstyCount > 0) {
-                updateSprouty(`Sprouty alert: You have ${thirstyCount} plant(s) waiting for water!`, "🥺");
+                updateFernie(`Fernie alert: You have ${thirstyCount} plant(s) waiting for water!`);
             } else {
-                updateSprouty("All plants are hydrated and happy! Great job keeping up with care.", "🪴");
+                updateFernie("Let's grow together! All plants are hydrated and happy!");
             }
         }
 
@@ -519,11 +578,10 @@
 
                 saveToStorage();
                 renderDashboard();
-                updateSprouty(`Yay! ${plant.nickname} has been watered!`, "💧");
+                updateFernie(`Yay! ${plant.nickname} has been watered!`);
             }
         }
 
-        // Details & Editing Modal Logic
         function openDetailsModal(id) {
             const plant = myPlants.find(p => p.id === id);
             if (!plant) return;
@@ -615,7 +673,7 @@
             saveToStorage();
             renderDashboard();
             closeDetailsModal();
-            updateSprouty("Care updates saved successfully!", "✨");
+            updateFernie("Care updates saved successfully!");
         }
 
         function promptDeletePlant(id) {
@@ -637,10 +695,9 @@
             saveToStorage();
             renderDashboard();
             closeDeleteModal();
-            updateSprouty("Plant removed from greenhouse canvas.", "🍃");
+            updateFernie("Plant removed from greenhouse canvas.");
         }
 
-        // Live API Botanical Search
         async function searchBotanicalAPI(query = '') {
             const grid = document.getElementById('encyclopedia-grid');
             const loader = document.getElementById('encyclopedia-loading');
@@ -649,7 +706,7 @@
 
             loader.classList.remove('hidden');
             grid.innerHTML = '';
-            updateSprouty(`Fetching botanical data for "${searchQuery}"...`, "🔎");
+            updateFernie(`Fetching botanical data for "${searchQuery}"...`);
 
             try {
                 const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(searchQuery + ' plant')}&format=json&origin=*`;
@@ -692,11 +749,11 @@
                     `;
                 }).join('');
 
-                updateSprouty(`Found botanical records for ${searchQuery}!`, "🌱");
+                updateFernie(`Found botanical records for ${searchQuery}!`);
             } catch (err) {
                 loader.classList.add('hidden');
                 grid.innerHTML = `<div class="col-span-full pastel-card p-8 text-center text-[#6B7C73]">No botanical entries found. Try another search term!</div>`;
-                updateSprouty("Could not find matching botanical records.", "🤔");
+                updateFernie("Could not find matching botanical records.");
             }
         }
 
@@ -720,10 +777,9 @@
             myPlants.unshift(newPlant);
             saveToStorage();
             switchTab('dashboard');
-            updateSprouty(`Added ${title} to your greenhouse canvas!`, "🎉");
+            updateFernie(`Added ${title} to your greenhouse canvas!`);
         }
 
-        // Live Quick Search
         function handleLiveQuickSearch() {
             clearTimeout(searchDebounceTimeout);
             const val = document.getElementById('quick-add-search').value.trim();
@@ -751,7 +807,6 @@
             }, 300);
         }
 
-        // Image Diagnosis Handler
         function handleImageUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -776,7 +831,7 @@
                         scientificName: 'Monstera deliciosa',
                         image: event.target.result
                     };
-                    updateSprouty("Scan complete! Plant exhibits vibrant, healthy foliage.", "📸");
+                    updateFernie("Scan complete! Plant exhibits vibrant, healthy foliage.");
                 }, 1200);
             };
             reader.readAsDataURL(file);
@@ -787,7 +842,6 @@
             addApiPlantToGarden(currentDiagnosedPlant.species, currentDiagnosedPlant.image);
         }
 
-        // Init App
         fetchLocalWeather();
         renderDashboard();
     </script>
