@@ -106,7 +106,7 @@
             <div class="flex justify-between items-center mb-8">
                 <div>
                     <h2 class="text-2xl font-bold text-[#33423A] tracking-tight">My Plant Collection</h2>
-                    <p class="text-sm text-[#6B7C73] mt-0.5">Keep track of your watering cycles, growth milestones, and care details.</p>
+                    <p class="text-sm text-[#6B7C73] mt-0.5">Click any plant card to update watering history or edit care notes.</p>
                 </div>
                 <button onclick="switchTab('scanner')" class="glitter-btn px-4 py-2.5 text-sm font-medium flex items-center space-x-2">
                     <i class="fa-solid fa-plus text-xs"></i>
@@ -163,7 +163,7 @@
             <div class="pastel-card p-6">
                 <div class="flex items-center space-x-3 mb-4">
                     <div class="bg-[#E3EDE6] text-[#7C9D8E] w-10 h-10 rounded-xl flex items-center justify-center text-sm">
-                        <i class="fa-solid fa-[#7C9D8E] fa-camera"></i>
+                        <i class="fa-solid fa-camera"></i>
                     </div>
                     <div>
                         <h2 class="text-lg font-bold text-[#33423A] tracking-tight">AI Picture Search & Health Diagnosis</h2>
@@ -175,7 +175,7 @@
                     <div class="border-2 border-dashed border-[#D5E2D8] rounded-xl p-6 text-center hover:bg-[#FAFCFA] transition cursor-pointer" onclick="document.getElementById('image-upload-input').click()">
                         <input type="file" id="image-upload-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
                         <div id="upload-placeholder">
-                            <i class="fa-solid fa-[#7C9D8E] fa-[#7C9D8E] fa-cloud-arrow-up text-3xl text-[#7C9D8E] mb-2"></i>
+                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-[#7C9D8E] mb-2"></i>
                             <p class="text-xs font-semibold text-[#33423A]">Click to upload plant photo</p>
                             <p class="text-[11px] text-[#6B7C73] mt-0.5">JPG, PNG, or WEBP supported</p>
                         </div>
@@ -196,7 +196,7 @@
                             </div>
                         </div>
                         <div class="border-t border-[#E3EDE6] pt-2">
-                            <h5 class="text-xs font-bold text-[#33423A] mb-1"><i class="fa-solid fa-[#7C9D8E] fa-stethoscope text-[#7C9D8E] mr-1"></i> Health Assessment:</h5>
+                            <h5 class="text-xs font-bold text-[#33423A] mb-1"><i class="fa-solid fa-stethoscope text-[#7C9D8E] mr-1"></i> Health Assessment:</h5>
                             <p class="text-xs text-[#6B7C73]" id="diag-health">Leaves show slight nitrogen deficiency and mild dehydration. Adjust watering and provide indirect light.</p>
                         </div>
                         <button onclick="addDiagnosedToGarden()" class="glitter-btn w-full py-2 text-xs font-semibold text-center mt-2">
@@ -209,6 +209,55 @@
         </section>
 
     </main>
+
+    <!-- Modal for Plant Care Details & Notes Editor -->
+    <div id="details-modal" class="hidden fixed inset-0 bg-[#33423A]/30 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+        <div class="pastel-card max-w-lg w-full p-6 shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto">
+            <button onclick="closeDetailsModal()" class="absolute top-4 right-4 bg-[#E3EDE6] text-[#6B7C73] hover:text-[#33423A] w-8 h-8 rounded-full flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+
+            <div class="flex items-center space-x-4 mb-4">
+                <img id="modal-plant-img" class="w-16 h-16 rounded-xl object-cover" src="" alt="">
+                <div>
+                    <h3 id="modal-plant-title" class="text-xl font-bold text-[#33423A]"></h3>
+                    <p id="modal-plant-scientific" class="text-xs text-[#7C9D8E] italic font-medium"></p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- Interactive Watering Tracker Section -->
+                <div class="bg-[#FAFCFA] p-4 rounded-xl border border-[#E3EDE6] space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-[#33423A] flex items-center"><i class="fa-solid fa-droplet text-blue-400 mr-1.5"></i> Watering Tracker</span>
+                        <span id="modal-water-status" class="text-[11px] font-semibold text-[#7C9D8E]"></span>
+                    </div>
+                    <p class="text-[#6B7C73] text-[11px]">Last Watered: <span id="modal-last-watered" class="font-medium text-[#33423A]">Not recorded</span></p>
+                    <button onclick="logWateringNow()" class="glitter-btn w-full py-2 text-xs font-semibold text-center flex items-center justify-center space-x-1">
+                        <i class="fa-solid fa-shower"></i>
+                        <span>Watered Today</span>
+                    </button>
+                </div>
+
+                <!-- Customizable Care Steps -->
+                <div>
+                    <label class="block font-bold text-[#33423A] mb-1"><i class="fa-solid fa-list-check text-[#7C9D8E] mr-1"></i> Care Steps</label>
+                    <textarea id="modal-edit-steps" rows="3" class="w-full p-3 rounded-xl text-xs leading-relaxed" placeholder="Enter care steps..."></textarea>
+                </div>
+
+                <!-- Customizable Notes -->
+                <div>
+                    <label class="block font-bold text-[#33423A] mb-1"><i class="fa-regular fa-note-sticky text-[#7C9D8E] mr-1"></i> Personal Care Notes</label>
+                    <textarea id="modal-edit-notes" rows="2" class="w-full p-3 rounded-xl text-xs leading-relaxed" placeholder="Add custom observations, fertilizer dates, etc."></textarea>
+                </div>
+
+                <div class="flex space-x-3 pt-2">
+                    <button onclick="closeDetailsModal()" class="flex-1 bg-[#E3EDE6] hover:bg-[#d1e2d5] text-[#33423A] font-semibold py-2.5 rounded-xl text-xs transition">Cancel</button>
+                    <button onclick="savePlantDetails()" class="flex-1 glitter-btn font-semibold py-2.5 rounded-xl text-xs text-center">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal for deleting plant -->
     <div id="delete-modal" class="hidden fixed inset-0 bg-[#33423A]/30 backdrop-blur-xs flex items-center justify-center z-50 p-4">
@@ -227,15 +276,43 @@
 
     <script>
         const fallbackDatabase = [
-            { name: 'Monstera Deliciosa', scientific: 'Monstera deliciosa', description: 'Tropical epiphyte native to Central America with iconic perforated leaves.', watering: 'Every 7-10 days', sunlight: 'Partial Sun / Shade', image: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=600&q=80' },
-            { name: 'White Oak', scientific: 'Quercus alba', description: 'Long-lived deciduous shade tree native to eastern North America.', watering: 'Rainfall / Deep Root', sunlight: 'Full Sun', image: 'https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80' }
+            { 
+                name: 'Monstera Deliciosa', 
+                scientific: 'Monstera deliciosa', 
+                description: 'Tropical epiphyte native to Central America with iconic perforated leaves.', 
+                watering: 'Every 7-10 days', 
+                sunlight: 'Partial Sun / Bright Indirect', 
+                wateringSteps: '1. Check top 2 inches of soil.\n2. Water deeply until it runs out drainage hole.\n3. Empty excess water from tray.',
+                image: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=600&q=80' 
+            },
+            { 
+                name: 'White Oak', 
+                scientific: 'Quercus alba', 
+                description: 'Long-lived deciduous shade tree native to eastern North America.', 
+                watering: 'Rainfall / Deep Root Weekly', 
+                sunlight: 'Full Sun', 
+                wateringSteps: '1. Water base deeply twice a week when young.\n2. Allow rain to take over once established.',
+                image: 'https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80' 
+            }
         ];
 
         let myPlants = JSON.parse(localStorage.getItem('floralog_plants')) || [
-            { id: 1, nickname: 'Monty', species: 'Monstera Deliciosa', scientificName: 'Monstera deliciosa', wateringFreq: 7, sunlight: 'Partial Shade', image: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=600&q=80', lastNote: 'Record verified.' }
+            { 
+                id: 1, 
+                nickname: 'Monty', 
+                species: 'Monstera Deliciosa', 
+                scientificName: 'Monstera deliciosa', 
+                wateringFreq: 'Every 7-10 days', 
+                sunlight: 'Partial Sun / Bright Indirect', 
+                wateringSteps: '1. Allow topsoil to dry.\n2. Water thoroughly around root base.\n3. Avoid leaving roots submerged in tray.',
+                image: 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=600&q=80', 
+                lastNote: 'Record verified and health metrics optimal.',
+                lastWatered: null
+            }
         ];
 
         let plantToDeleteId = null;
+        let activeEditingPlantId = null;
         let currentDiagnosedPlant = null;
 
         function saveToStorage() {
@@ -264,22 +341,120 @@
             }
 
             grid.innerHTML = myPlants.map(plant => `
-                <div class="pastel-card overflow-hidden flex flex-col justify-between">
+                <div class="pastel-card overflow-hidden flex flex-col justify-between cursor-pointer hover:border-[#7C9D8E] transition" onclick="openDetailsModal(${plant.id})">
                     <div>
                         <div class="relative h-48 bg-[#E3EDE6]">
                             <img src="${plant.image}" class="w-full h-full object-cover" alt="${plant.nickname}">
-                            <button onclick="promptDeletePlant(${plant.id})" class="absolute top-3 left-3 bg-white/90 text-[#6B7C73] w-7 h-7 rounded-full flex items-center justify-center">
+                            <button onclick="event.stopPropagation(); promptDeletePlant(${plant.id})" class="absolute top-3 left-3 bg-white/90 text-[#6B7C73] hover:text-red-500 w-7 h-7 rounded-full flex items-center justify-center transition">
                                 <i class="fa-solid fa-xmark text-xs"></i>
                             </button>
                         </div>
-                        <div class="p-5">
-                            <h3 class="text-lg font-bold text-[#33423A]">${plant.nickname}</h3>
-                            <p class="text-xs text-[#7C9D8E] italic font-medium mb-4">${plant.scientificName}</p>
-                            <p class="text-xs text-[#6B7C73] bg-[#FAFCFA] p-2 rounded-lg border border-[#E3EDE6]">${plant.lastNote}</p>
+                        <div class="p-5 space-y-3">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-lg font-bold text-[#33423A]">${plant.nickname}</h3>
+                                    <p class="text-xs text-[#7C9D8E] italic font-medium">${plant.scientificName || plant.species}</p>
+                                </div>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#E3EDE6] text-[#4A6357] font-semibold">
+                                    <i class="fa-solid fa-pen text-[9px] mr-1"></i>Edit
+                                </span>
+                            </div>
+
+                            <!-- Care Details Grid -->
+                            <div class="grid grid-cols-2 gap-2 text-xs bg-[#FAFCFA] p-3 rounded-xl border border-[#E3EDE6]">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-droplet text-blue-400"></i>
+                                    <div>
+                                        <p class="text-[10px] text-[#6B7C73] font-semibold uppercase tracking-wider">Watering</p>
+                                        <p class="text-[#33423A] font-medium text-[11px]">${plant.wateringFreq || 'Every 7 days'}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-sun text-amber-400"></i>
+                                    <div>
+                                        <p class="text-[10px] text-[#6B7C73] font-semibold uppercase tracking-wider">Sunlight</p>
+                                        <p class="text-[#33423A] font-medium text-[11px]">${plant.sunlight || 'Partial Sun'}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Care Steps -->
+                            ${plant.wateringSteps ? `
+                            <div class="text-xs">
+                                <p class="text-[11px] font-bold text-[#33423A] mb-1"><i class="fa-solid fa-list-check text-[#7C9D8E] mr-1"></i> Care Steps:</p>
+                                <p class="text-[11px] text-[#6B7C73] whitespace-pre-line leading-relaxed bg-[#FAFCFA] p-2 rounded-lg border border-[#E3EDE6] max-h-24 overflow-hidden">${plant.wateringSteps}</p>
+                            </div>
+                            ` : ''}
+
+                            <p class="text-xs text-[#6B7C73] bg-[#FAFCFA] p-2 rounded-lg border border-[#E3EDE6] italic">${plant.lastNote || 'Healthy and active.'}</p>
                         </div>
                     </div>
                 </div>
             `).join('');
+        }
+
+        // Details & Editing Modal Logic
+        function openDetailsModal(id) {
+            const plant = myPlants.find(p => p.id === id);
+            if (!plant) return;
+
+            activeEditingPlantId = id;
+            document.getElementById('modal-plant-img').src = plant.image;
+            document.getElementById('modal-plant-title').innerText = plant.nickname;
+            document.getElementById('modal-plant-scientific').innerText = plant.scientificName || plant.species;
+            document.getElementById('modal-edit-steps').value = plant.wateringSteps || '';
+            document.getElementById('modal-edit-notes').value = plant.lastNote || '';
+
+            updateWateringStatusDisplay(plant);
+            document.getElementById('details-modal').classList.remove('hidden');
+        }
+
+        function closeDetailsModal() {
+            activeEditingPlantId = null;
+            document.getElementById('details-modal').classList.add('hidden');
+        }
+
+        function updateWateringStatusDisplay(plant) {
+            const statusEl = document.getElementById('modal-water-status');
+            const dateEl = document.getElementById('modal-last-watered');
+
+            if (!plant.lastWatered) {
+                statusEl.innerText = 'Needs Watering';
+                dateEl.innerText = 'Not recorded yet';
+                return;
+            }
+
+            const lastDate = new Date(plant.lastWatered);
+            dateEl.innerText = lastDate.toLocaleDateString() + ' at ' + lastDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const diffDays = Math.floor((new Date() - lastDate) / (1000 * 60 * 60 * 24));
+            if (diffDays === 0) {
+                statusEl.innerText = 'Watered Today';
+            } else {
+                statusEl.innerText = `Watered ${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+            }
+        }
+
+        function logWateringNow() {
+            const plant = myPlants.find(p => p.id === activeEditingPlantId);
+            if (!plant) return;
+
+            plant.lastWatered = new Date().toISOString();
+            saveToStorage();
+            updateWateringStatusDisplay(plant);
+            renderDashboard();
+        }
+
+        function savePlantDetails() {
+            const plant = myPlants.find(p => p.id === activeEditingPlantId);
+            if (!plant) return;
+
+            plant.wateringSteps = document.getElementById('modal-edit-steps').value.trim();
+            plant.lastNote = document.getElementById('modal-edit-notes').value.trim();
+            
+            saveToStorage();
+            renderDashboard();
+            closeDetailsModal();
         }
 
         async function searchLiveEncyclopedia(query = '') {
@@ -311,8 +486,9 @@
                     name: p.title,
                     scientific: p.title + ' species',
                     description: p.extract || 'Botanical entry registered in open database.',
-                    watering: 'Moderate watering schedule',
+                    watering: 'Every 5-7 days',
                     sunlight: 'Bright indirect light',
+                    wateringSteps: '1. Check moisture at soil level.\n2. Apply water thoroughly until saturated.\n3. Ensure adequate drainage.',
                     image: (p.thumbnail && p.thumbnail.source) ? p.thumbnail.source : 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=600&q=80'
                 }));
 
@@ -340,10 +516,24 @@
                 <div class="pastel-card overflow-hidden flex flex-col justify-between">
                     <div>
                         <img src="${item.image}" class="h-44 w-full object-cover" alt="${item.name}" onerror="this.src='https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=600&q=80'">
-                        <div class="p-5">
-                            <h3 class="text-lg font-bold text-[#33423A]">${item.name}</h3>
-                            <p class="text-xs text-[#7C9D8E] italic font-medium mb-3">${item.scientific}</p>
-                            <p class="text-xs text-[#6B7C73] mb-4">${item.description}</p>
+                        <div class="p-5 space-y-3">
+                            <div>
+                                <h3 class="text-lg font-bold text-[#33423A]">${item.name}</h3>
+                                <p class="text-xs text-[#7C9D8E] italic font-medium">${item.scientific}</p>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 text-xs bg-[#FAFCFA] p-2.5 rounded-xl border border-[#E3EDE6]">
+                                <div class="flex items-center space-x-1.5">
+                                    <i class="fa-solid fa-droplet text-blue-400 text-[11px]"></i>
+                                    <span class="text-[11px] text-[#33423A] font-medium">${item.watering || 'Moderate'}</span>
+                                </div>
+                                <div class="flex items-center space-x-1.5">
+                                    <i class="fa-solid fa-sun text-amber-400 text-[11px]"></i>
+                                    <span class="text-[11px] text-[#33423A] font-medium">${item.sunlight || 'Partial Sun'}</span>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-[#6B7C73]">${item.description}</p>
                         </div>
                     </div>
                     <div class="p-5 pt-0">
@@ -361,10 +551,12 @@
                 nickname: item.name,
                 species: item.name,
                 scientificName: item.scientific,
-                wateringFreq: 7,
-                sunlight: item.sunlight,
+                wateringFreq: item.watering || 'Every 7 days',
+                sunlight: item.sunlight || 'Partial Sun',
+                wateringSteps: item.wateringSteps || '1. Verify dry topsoil.\n2. Water deeply.\n3. Drain thoroughly.',
                 image: item.image,
-                lastNote: 'Source: Botanical Database'
+                lastNote: 'Source: Botanical Database',
+                lastWatered: null
             });
             saveToStorage();
             switchTab('dashboard');
@@ -397,8 +589,9 @@
                             name: p.title,
                             scientific: p.title + ' species',
                             description: p.extract || 'Botanical entry.',
-                            watering: 'Moderate',
+                            watering: 'Every 7 days',
                             sunlight: 'Partial Sun',
+                            wateringSteps: '1. Check topsoil moisture.\n2. Water base thoroughly.\n3. Allow proper drainage.',
                             image: (p.thumbnail && p.thumbnail.source) ? p.thumbnail.source : 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=600&q=80'
                         };
                         return `
@@ -431,7 +624,6 @@
             resultsBox.classList.remove('hidden');
         }
 
-        // Image Diagnosis Logic
         function handleImageUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -449,7 +641,6 @@
                 results.classList.add('hidden');
                 loader.classList.remove('hidden');
 
-                // Simulate AI Plant Identification & Diagnosis
                 setTimeout(() => {
                     loader.classList.add('hidden');
                     results.classList.remove('hidden');
@@ -472,6 +663,7 @@
                         description: selected.health,
                         watering: "Every 7 days",
                         sunlight: "Partial Sun",
+                        wateringSteps: "1. Check leaf moisture.\n2. Water root zone evenly.\n3. Keep drainage clear.",
                         image: e.target.result
                     };
                 }, 1400);
@@ -507,7 +699,6 @@
             }
         }
 
-        // Initial Load
         renderDashboard();
     </script>
 </body>
