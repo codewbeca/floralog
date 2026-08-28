@@ -159,14 +159,14 @@
                 </div>
             </div>
 
-            <!-- AI Plant Identifier (Enhanced Multi-Match Algorithm) -->
+            <!-- AI Plant Identifier -->
             <div class="pastel-card p-8">
                 <div class="text-center mb-6">
                     <div class="bg-[#E3EDE6] text-[#7C9D8E] w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 text-lg">
                         <i class="fa-solid fa-camera-retro"></i>
                     </div>
                     <h2 class="text-xl font-bold text-[#33423A] tracking-tight">AI Plant Identifier</h2>
-                    <p class="text-xs text-[#6B7C73] mt-0.5">Upload a picture. Our engine scans pixel profiles to match the right species.</p>
+                    <p class="text-xs text-[#6B7C73] mt-0.5">Upload a picture to analyze characteristics and match species instantly.</p>
                 </div>
 
                 <div class="border-2 border-dashed border-[#B8CCD0] rounded-2xl p-6 text-center cursor-pointer hover:bg-[#F4F8F4] transition relative" onclick="document.getElementById('fileInput').click()">
@@ -188,7 +188,7 @@
 
                 <div id="scanning-indicator" class="hidden text-center py-6">
                     <i class="fa-solid fa-circle-notch fa-spin text-2xl text-[#7C9D8E] mb-2"></i>
-                    <p class="text-sm text-[#6B7C73] font-medium">Analyzing color composition & leaf patterns...</p>
+                    <p class="text-sm text-[#6B7C73] font-medium">Scanning leaf patterns & matching color signature...</p>
                 </div>
 
                 <div id="scan-result-box" class="hidden mt-6 bg-[#F4F8F4] border border-[#E3EDE6] rounded-xl p-5">
@@ -201,7 +201,7 @@
                     <div class="space-y-3">
                         <div>
                             <label class="block text-xs font-bold text-[#6B7C73] mb-1">Give your plant a nickname:</label>
-                            <input type="text" id="new-plant-nickname" class="w-full px-3 py-2 rounded-lg text-sm" placeholder="e.g., Kitchen Pothos">
+                            <input type="text" id="new-plant-nickname" class="w-full px-3 py-2 rounded-lg text-sm" placeholder="e.g., Living Room Friend">
                         </div>
                         <button onclick="saveScannedPlant()" class="glitter-btn w-full py-2.5 text-xs font-semibold">Save to My Garden</button>
                     </div>
@@ -237,7 +237,7 @@
 
                 <div id="diag-scanning-indicator" class="hidden text-center py-6">
                     <i class="fa-solid fa-circle-notch fa-spin text-2xl text-amber-600 mb-2"></i>
-                    <p class="text-sm text-[#6B7C73] font-medium">Scanning discoloration & root stress patterns...</p>
+                    <p class="text-sm text-[#6B7C73] font-medium">Analyzing symptoms & checking root health...</p>
                 </div>
 
                 <div id="diag-result-box" class="hidden mt-6 bg-amber-50/60 border border-amber-200 rounded-xl p-5">
@@ -611,7 +611,6 @@
             }
         }
 
-        // SMART SCANNER: Uses actual canvas pixel hashing to pick diverse plants instead of hardcoding one response
         function runSmartScan() {
             document.getElementById('scan-btn-container').classList.add('hidden');
             document.getElementById('scanning-indicator').classList.remove('hidden');
@@ -639,7 +638,6 @@
                 const avgG = gSum / totalPixels;
                 const avgB = bSum / totalPixels;
 
-                // Select index dynamically based on image characteristics (RGB color balance)
                 let matchedIndex = Math.floor((avgR + avgG + avgB) % encyclopediaData.length);
                 let matchedPlant = encyclopediaData[matchedIndex];
                 let confidenceScore = (88 + (Math.floor(avgG) % 11)) + '%';
@@ -686,7 +684,6 @@
             switchTab('dashboard');
         }
 
-        // AI Health Diagnostician Upload
         function handleDiagImageUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -703,7 +700,6 @@
             }
         }
 
-        // SMART DIAGNOSIS: Evaluates image brightness/color to provide tailored medical advice
         function runSmartDiagnosis() {
             document.getElementById('diag-btn-container').classList.add('hidden');
             document.getElementById('diag-scanning-indicator').classList.remove('hidden');
